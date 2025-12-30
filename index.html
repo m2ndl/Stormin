@@ -1,0 +1,188 @@
+import React from 'react';
+import { 
+  Printer, 
+  BookOpen, 
+  Target, 
+  Database, 
+  PenTool, 
+  CheckCircle,
+  Quote
+} from 'lucide-react';
+
+// --- Static Data ---
+const ideas = [
+  {
+    id: 1,
+    title: "ESP / Legal English dissertation",
+    aim: "Build a Saudi-context Legal English needs map and convert it into a teachable, assessable framework.",
+    data: "Survey + interviews with Saudi legal professionals; Saudi legal corpus (official translated laws and approved texts).",
+    design: [
+      "Needs analysis (drivers, tasks/contexts, learning preferences).",
+      "Corpus-informed language patterns for key legal functions/genres.",
+      "Framework + prototype syllabus/rubrics, validated by experts and/or a short pilot."
+    ],
+    outputs: "Task map + language specification + Saudi Legal English framework (levels, competencies, assessment tools)."
+  },
+  {
+    id: 2,
+    title: "MBTI awareness as intervention",
+    aim: "Test whether learning one’s MBTI type (officially administered + debriefed) improves metacognitive strategy use and affects motivation, anxiety, and self-efficacy; explore learner-identity talk.",
+    data: "60–90 Saudi EFL university students (2–3 intact classes).",
+    design: [
+      "Pre–post mixed methods: baseline scales + MBTI.",
+      "1–2 type-awareness workshops + reflections.",
+      "End-of-term re-test + subset interviews."
+    ],
+    outputs: "Evidence of pre–post shifts in strategies/affect + qualitative account of how learners use “type” to explain and adjust learning."
+  }
+];
+
+// --- Styles for Print Optimization ---
+const PrintStyles = () => (
+  <style>{`
+    @media print {
+      @page {
+        margin: 2.5cm;
+        size: auto;
+      }
+      body {
+        background-color: white;
+        -webkit-print-color-adjust: exact;
+        print-color-adjust: exact;
+      }
+      /* Ensure links don't show URLs */
+      a[href]:after {
+        content: none !important;
+      }
+    }
+  `}</style>
+);
+
+// --- Components ---
+
+const Section = ({ title, icon: Icon, children, className = "" }) => (
+  <div className={`grid grid-cols-1 md:grid-cols-[120px_1fr] gap-2 md:gap-4 ${className} break-inside-avoid`}>
+    <div className="flex items-center md:items-start gap-2 text-slate-500 font-bold text-xs uppercase tracking-widest pt-1 print:text-black">
+      <Icon size={14} className="mt-0.5 print:hidden" />
+      <span>{title}</span>
+    </div>
+    <div className="text-slate-800 text-base leading-relaxed font-serif text-justify print:text-black">
+      {children}
+    </div>
+  </div>
+);
+
+const ProposalCard = ({ data, number }) => {
+  return (
+    <div className="bg-white border border-slate-200 shadow-sm mb-12 rounded-xl overflow-hidden print:shadow-none print:border-0 print:mb-12 print:rounded-none break-inside-avoid">
+      {/* Header */}
+      <div className="bg-slate-50 border-b border-slate-100 p-8 print:bg-white print:p-0 print:border-b-2 print:border-black print:mb-6">
+        <div className="flex items-baseline gap-3 mb-2">
+          <span className="text-slate-400 font-serif font-bold text-xl print:text-slate-600 print:text-sm print:uppercase">Topic {number}</span>
+        </div>
+        <h2 className="text-2xl md:text-3xl font-serif font-bold text-slate-900 print:text-black">
+          {data.title}
+        </h2>
+      </div>
+
+      {/* Body */}
+      <div className="p-8 space-y-8 print:p-0 print:pt-4">
+        
+        {/* Aim - Highlighted */}
+        <div className="bg-blue-50/50 p-6 rounded-lg border-l-4 border-blue-600 print:bg-white print:border-l-0 print:border-b print:border-slate-200 print:p-0 print:pb-4">
+          <div className="flex gap-4">
+            <Quote className="text-blue-200 shrink-0 hidden md:block print:hidden" size={32} />
+            <div>
+              <h3 className="text-blue-900 font-bold text-sm uppercase tracking-wide mb-2 md:hidden print:block print:text-black">Aim</h3>
+              <p className="text-lg text-slate-800 font-serif italic leading-relaxed print:text-black print:not-italic">
+                {data.aim}
+              </p>
+            </div>
+          </div>
+        </div>
+
+        {/* Technical Details */}
+        <div className="space-y-6">
+          <Section title="Data Source" icon={Database}>
+            {data.data}
+          </Section>
+
+          <Section title="Design" icon={PenTool}>
+            <ul className="list-disc pl-5 space-y-1 marker:text-slate-400 print:marker:text-black">
+              {data.design.map((item, i) => (
+                <li key={i}>{item}</li>
+              ))}
+            </ul>
+          </Section>
+
+          <Section title="Outputs" icon={CheckCircle}>
+            <div className="bg-emerald-50/50 -mx-4 p-4 rounded-lg md:bg-transparent md:p-0 print:bg-transparent print:p-0">
+              <span className="text-emerald-900 md:text-slate-800 font-medium md:font-normal print:text-black">
+                {data.outputs}
+              </span>
+            </div>
+          </Section>
+        </div>
+      </div>
+    </div>
+  );
+};
+
+export default function App() {
+  const handlePrint = () => {
+    window.print();
+  };
+
+  return (
+    <div className="min-h-screen bg-slate-100 font-sans pb-20 print:bg-white print:pb-0">
+      <PrintStyles />
+      
+      {/* Navigation Bar (Hidden in Print) */}
+      <nav className="bg-slate-900 text-white sticky top-0 z-50 shadow-md print:hidden">
+        <div className="max-w-4xl mx-auto px-6 h-16 flex items-center justify-between">
+          <div className="flex items-center gap-3">
+            <BookOpen size={20} className="text-blue-400" />
+            <span className="font-serif font-bold text-lg tracking-tight">Dissertation Proposals</span>
+          </div>
+          <button 
+            onClick={handlePrint}
+            className="flex items-center gap-2 bg-blue-600 text-white px-4 py-2 rounded-md text-sm font-bold hover:bg-blue-500 transition-colors shadow-sm"
+          >
+            <Printer size={16} />
+            Print / Save as PDF
+          </button>
+        </div>
+      </nav>
+
+      {/* Main Document Area */}
+      <main className="max-w-4xl mx-auto mt-8 print:mt-0 print:w-full print:max-w-none">
+        
+        {/* Print Header (Only shows on print) */}
+        <div className="hidden print:block mb-10 pb-6 border-b-2 border-black">
+          <div className="flex justify-between items-end">
+            <div>
+              <h1 className="text-4xl font-serif font-bold text-black">Dissertation Topic Proposals</h1>
+              <p className="text-slate-600 mt-2 font-serif italic">Draft Concepts for Supervisor Review</p>
+            </div>
+            <div className="text-sm text-slate-500 font-mono">
+              {new Date().toLocaleDateString()}
+            </div>
+          </div>
+        </div>
+
+        {/* Proposals */}
+        {ideas.map((idea, index) => (
+          <ProposalCard key={idea.id} data={idea} number={index + 1} />
+        ))}
+
+        {/* Footer */}
+        <div className="text-center text-slate-400 text-sm py-8 print:hidden">
+          <p>Generated for review purposes.</p>
+        </div>
+      </main>
+
+    </div>
+  );
+}
+
+
